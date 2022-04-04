@@ -3,7 +3,7 @@ import InfluencerCard from "./Card";
 import styled from "styled-components";
 
 const InfluencerSearch = () => {
-  const [influencers, setInfluencers] = useState(null);
+  const [influencers, setInfluencers] = useState();
   const [searchString, setSearchString] = useState("");
   // const [platformString, setPlatformString] = useState("all");
 
