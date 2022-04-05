@@ -27,6 +27,7 @@ const InfluencerSearch = () => {
     influencers?.forEach(inf => infl.push(inf['followers']))
     return Math.max(...infl)
   }
+
   const filtered = () => {
     const firstFiltered = influencers?.filter((inf) => (
       [inf['handle'], inf['platform']['name'], inf['primary_tag']['name']].join(' ').toLowerCase().includes(searchString.toLowerCase())
@@ -59,8 +60,11 @@ const InfluencerSearch = () => {
 
   const followerFiltered = () => {
     if(followerCount !== "") {
-      return platformFiltered()?.filter((inf) => (
+      let folFilt = platformFiltered()?.filter((inf) => (
         inf['followers'] <= followerCount
+      ))
+      return folFilt.sort((a,b)=> (
+        b['followers'] - a['followers']
       ))
     } else {
       return platformFiltered()
@@ -97,7 +101,7 @@ const InfluencerSearch = () => {
               type='range'
               min={0}
               max={maxFollowers()}
-              step={100}
+              step={1}
               onChange={(e) => setFollowerCount(e.target.value)}
               value={followerCount}
               name="followersRange"
