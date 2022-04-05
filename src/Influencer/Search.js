@@ -90,9 +90,9 @@ const InfluencerSearch = () => {
           <option value="youtube">Youtube</option>
         </SelectInput>
         <RangeInputContainer>
-          <label for="followersRange">Filter by follower count</label>
+          <label for="followersRange">Followers</label>
           <div>
-            0
+            <p>0</p>
             <RangeInput
               type='range'
               min={0}
@@ -103,8 +103,9 @@ const InfluencerSearch = () => {
               name="followersRange"
               id="followersRange"
             />
-            {(followerCount) ? followerCount : "max" }
+            <p>max</p>
           </div>
+          <p>{(followerCount) ? followerCount : "-" }</p>
           </RangeInputContainer>
       </SearchInputContainer>
       <SearchContainer>
@@ -123,15 +124,24 @@ const InfluencerSearch = () => {
 const RangeInputContainer = styled.div`
 color: grey;
 font-size: 0.6rem;
+display: block;
   div {
-    display: block;
+    display: flex;
+    align-items: center;
   }
   label {
-    font-size: 0.7rem;
+    padding: 0 2rem;
+    margin: 0 auto;
+    font-size: 0.8rem;
+    color: rgb(110,110,110);
+  }
+  p {
+    margin:0;
   }
 `;
 
 const RangeInput = styled.input`
+  margin: 0;
 `;
 
 
