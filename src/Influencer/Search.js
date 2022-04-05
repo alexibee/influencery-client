@@ -5,7 +5,8 @@ import styled from "styled-components";
 const InfluencerSearch = () => {
   const [influencers, setInfluencers] = useState();
   const [searchString, setSearchString] = useState("");
-  // const [platformString, setPlatformString] = useState("all");
+  const [platformString, setPlatformString] = useState("all");
+  const [followerCount, setFollowerCount] = useState("");
 
   useEffect(() => {
     getInfluencers();
@@ -21,7 +22,11 @@ const InfluencerSearch = () => {
       .then((response) => response.json())
       .then((data) => setInfluencers(data));
 
-
+  const maxFollowers = () => {
+    const infl = []
+    influencers?.forEach(inf => infl.push(inf['followers']))
+    return Math.max(...infl)
+  }
   const filtered = () => {
     const firstFiltered = influencers?.filter((inf) => (
       [inf['handle'], inf['platform']['name'], inf['primary_tag']['name']].join(' ').toLowerCase().includes(searchString.toLowerCase())
@@ -42,6 +47,25 @@ const InfluencerSearch = () => {
     }
   }
 
+  const platformFiltered = () => {
+    if(platformString.toLowerCase() !== "all") {
+      return filtered()?.filter((inf) => (
+        inf['platform']['name'].toLowerCase() === platformString.toLowerCase()
+      ))
+    } else {
+      return filtered()
+    }
+  }
+
+  const followerFiltered = () => {
+    if(followerCount !== "") {
+      return platformFiltered()?.filter((inf) => (
+        inf['followers'] <= followerCount
+      ))
+    } else {
+      return platformFiltered()
+    }
+  }
 
   return (
     <div>
@@ -52,7 +76,7 @@ const InfluencerSearch = () => {
           value={searchString}
           onChange={(e) => setSearchString(e.target.value)}
         />
-        {/* <SelectInput
+        <SelectInput
           value={platformString}
           onChange={(e) => setPlatformString(e.target.value)}
           name="platforms"
@@ -64,12 +88,29 @@ const InfluencerSearch = () => {
           <option value="facebook">Facebook</option>
           <option value="tiktok">Tik-Tok</option>
           <option value="youtube">Youtube</option>
-        </SelectInput> */}
+        </SelectInput>
+        <RangeInputContainer>
+          <label for="followersRange">Filter by follower count</label>
+          <div>
+            0
+            <RangeInput
+              type='range'
+              min={0}
+              max={maxFollowers()}
+              step={100}
+              onChange={(e) => setFollowerCount(e.target.value)}
+              value={followerCount}
+              name="followersRange"
+              id="followersRange"
+            />
+            {(followerCount) ? followerCount : "max" }
+          </div>
+          </RangeInputContainer>
       </SearchInputContainer>
       <SearchContainer>
         {!influencers && <Loader />}
         <div>
-        {filtered()?.map((inf, i) => (
+        {followerFiltered()?.map((inf, i) => (
             <InfluencerCard influencer={inf} key={"inf_card_" + i} />
           ))}
         </div>
@@ -77,6 +118,22 @@ const InfluencerSearch = () => {
     </div>
   );
 };
+
+
+const RangeInputContainer = styled.div`
+color: grey;
+font-size: 0.6rem;
+  div {
+    display: block;
+  }
+  label {
+    font-size: 0.7rem;
+  }
+`;
+
+const RangeInput = styled.input`
+`;
+
 
 const SelectInput = styled.select`
   -webkit-border-radius: 20px;
@@ -134,6 +191,9 @@ const SearchInput = styled.input`
 const SearchInputContainer = styled.div`
   width: 100%;
   position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: #f2f2f2;
   z-index: 1000;
 `;
