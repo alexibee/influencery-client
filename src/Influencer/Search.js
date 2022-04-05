@@ -21,6 +21,28 @@ const InfluencerSearch = () => {
       .then((response) => response.json())
       .then((data) => setInfluencers(data));
 
+
+  const filtered = () => {
+    const firstFiltered = influencers?.filter((inf) => (
+      [inf['handle'], inf['platform']['name'], inf['primary_tag']['name']].join(' ').toLowerCase().includes(searchString.toLowerCase())
+    ))
+
+    let secondFiltered = influencers?.filter((inf) => (
+      inf['tags'].map((tag) => (tag['name'])).join(' ').toLowerCase().includes(searchString.toLowerCase())
+    ))
+
+    secondFiltered = secondFiltered?.filter((inf) => (
+      !firstFiltered.includes(inf)
+    ))
+
+    if(firstFiltered?.concat(secondFiltered)){
+      return firstFiltered?.concat(secondFiltered)
+    } else {
+      return influencers
+    }
+  }
+
+
   return (
     <div>
       <SearchInputContainer>
@@ -47,7 +69,7 @@ const InfluencerSearch = () => {
       <SearchContainer>
         {!influencers && <Loader />}
         <div>
-          {influencers?.map((inf, i) => (
+        {filtered()?.map((inf, i) => (
             <InfluencerCard influencer={inf} key={"inf_card_" + i} />
           ))}
         </div>
